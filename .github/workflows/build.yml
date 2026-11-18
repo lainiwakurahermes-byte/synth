@@ -20,3 +20,9 @@ jobs:
       - run: gh release create "build-${{ github.run_number }}" dist/Synth.zip --title "Build ${{ github.run_number }}" --notes "${{ github.sha }}"
         env:
           GH_TOKEN: ${{ github.token }}
+
+  # Temporary: shows whether this account gets any hosted runner.
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ok
