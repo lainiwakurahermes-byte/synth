@@ -1,0 +1,18 @@
+[package]
+name = "synth"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+# cdylib is the plugin (CLAP/VST3); lib lets the standalone binary link the same code.
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683", features = ["standalone"] }
+nih_plug_egui = { git = "https://github.com/robbert-vdh/nih-plug.git", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683" }
+# Same version nih_plug uses; the standalone binary lists MIDI ports with it.
+midir = "0.9.1"
+
+[profile.release]
+lto = "thin"
+strip = "symbols"

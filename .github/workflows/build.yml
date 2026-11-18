@@ -1,0 +1,22 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write # to publish the release
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test
+      - run: scripts/bundle-macos.sh
+      # The newest release is what the Homebrew cask downloads.
+      - run: gh release create "build-${{ github.run_number }}" dist/Synth.zip --title "Build ${{ github.run_number }}" --notes "${{ github.sha }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
