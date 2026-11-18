@@ -1,15 +1,14 @@
 name: build
 
-on:
-  push:
-    branches: [main]
+# Manual only: this account gets no hosted macOS runner yet, so a push trigger fails every time.
+on: workflow_dispatch
 
 permissions:
   contents: write # to publish the release
 
 jobs:
   macos:
-    runs-on: macos-15-intel # arm64 runners are short on capacity; the build is universal either way
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
@@ -20,9 +19,3 @@ jobs:
       - run: gh release create "build-${{ github.run_number }}" dist/Synth.zip --title "Build ${{ github.run_number }}" --notes "${{ github.sha }}"
         env:
           GH_TOKEN: ${{ github.token }}
-
-  # Temporary: shows whether this account gets any hosted runner.
-  probe:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ok
