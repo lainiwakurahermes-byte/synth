@@ -79,7 +79,7 @@ impl Default for Synth {
     fn default() -> Self {
         Self {
             params: Arc::new(SynthParams {
-                editor_state: EguiState::from_size(360, 240),
+                editor_state: EguiState::from_size(420, 280),
                 attack: time_param("Attack", 10.0),
                 decay: time_param("Decay", 200.0),
                 sustain: FloatParam::new("Sustain", 0.7, FloatRange::Linear { min: 0.0, max: 1.0 })
@@ -128,9 +128,10 @@ impl Plugin for Synth {
 
         create_egui_editor(
             self.params.editor_state.clone(),
-            (),
+            // Every CC number seen so far, in the order of first arrival.
+            Vec::<u8>::new(),
             |_, _| {},
-            move |egui_ctx, setter, _state| {
+            move |egui_ctx, setter, seen_ccs| {
                 let knobs = [
                     (CC_ATTACK, &params.attack),
                     (CC_DECAY, &params.decay),
@@ -164,11 +165,15 @@ impl Plugin for Synth {
 
                     ui.add_space(8.0);
                     let last_cc = midi_ccs.last_cc.load(Ordering::Relaxed);
+                    if last_cc != NO_VALUE && !seen_ccs.contains(&last_cc) {
+                        seen_ccs.push(last_cc);
+                    }
                     if last_cc == NO_VALUE {
                         ui.label("Last MIDI CC: none yet. Turn a knob on the keyboard.");
                     } else {
                         let last_value = midi_ccs.last_value.load(Ordering::Relaxed);
                         ui.label(format!("Last MIDI CC: {last_cc} = {last_value}"));
+                        ui.label(format!("CCs seen, in order: {seen_ccs:?}"));
                     }
                 });
             },
