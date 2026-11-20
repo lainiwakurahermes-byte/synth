@@ -12,11 +12,11 @@ use oscillator::Oscillator;
 /// Fixed output level. A full-scale sawtooth is painfully loud.
 const LEVEL: f32 = 0.2;
 
-// Keyboard knobs. Provisional: the first four pots of a Novation Launchkey in its default mode.
-const CC_ATTACK: u8 = 21;
-const CC_DECAY: u8 = 22;
-const CC_SUSTAIN: u8 = 23;
-const CC_RELEASE: u8 = 24;
+// Launchkey MK4 factory Custom 1 mode: faders 1-9 send CC 71-79, encoders 1-8 send CC 21-28.
+const CC_ATTACK: u8 = 71;
+const CC_DECAY: u8 = 72;
+const CC_SUSTAIN: u8 = 73;
+const CC_RELEASE: u8 = 74;
 
 /// Marks a slot in `MidiCcs::pending` that holds no new value.
 const NO_VALUE: u8 = u8::MAX;
